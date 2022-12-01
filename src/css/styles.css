@@ -18,3 +18,21 @@ body {
   max-width: 320px;
   margin-bottom: 16px;
 }
+
+/* ----------------------------------------- */
+.country-block {
+  display: block;
+  text-decoration: none;
+}
+
+.country-strig {
+  display: flex;
+  /* display: block; */
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.country-name {
+  font-size: 22px;
+  margin-left: 10px;
+}
