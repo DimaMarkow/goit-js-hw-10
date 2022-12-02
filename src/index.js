@@ -2,16 +2,16 @@ import './css/styles.css';
 
 var _ = require('lodash');
 var debounce = require('lodash.debounce');
+import Notiflix from 'notiflix';
 
 const getItemTemplateSmall = ({ name, flags }) => {
-  // console.log(flags.svg);
   const str = `<li class="country-block">
   <div  class="country-strig">
-  <img src=${flags.svg} alt="Flag of ${name.official}" width="40"/>
-  <div class="country-name">${name.official}</div>
+  <img src=${flags.svg} alt="Flag of ${name.common}" width="40"/>
+  <div class="country-name">${name.common}</div>
   </div>
   </li>`;
-  console.log(str);
+  // console.log(str);
   return str;
 };
 
@@ -26,20 +26,22 @@ const getItemTemplateFull = ({
 
   const str = `<li class="country-block">
   <div  class="country-strig">
-  <img src=${flags.svg} alt="Flag of ${name.official}" width="40"/>
-  <div class="country-name">${name.official}</div>  
+  <img src=${flags.svg} alt="Flag of ${name.common}" width="40"/>
+  <div class="countryFull-nameCommon">${name.common}</div>  
   </div>
-  <div class="country-name">Capital: ${capital}</div>
-  <div class="country-name">Population: ${population}</div>
-  <div class="country-name">Languages: ${allLaguages.join(`, `)}</div>
+  <div class="countryFull-parametersCommon">
+  <span class="countryFull-parametersCommonBold">Capital: </span>${capital}</div>
+  <div class="countryFull-parametersCommon">
+  <span class="countryFull-parametersCommonBold">Population: </span>${population}</div>
+  <div class="countryFull-parametersCommon">
+  <span class="countryFull-parametersCommonBold">Languages: </span>${allLaguages.join(
+    `, `
+  )}</div>
   </li>`;
-  console.log(str);
   return str;
 };
 
-// const values = Object.values(book);
-
-const DEBOUNCE_DELAY = 1000;
+const DEBOUNCE_DELAY = 300;
 const URL = `https://restcountries.com/v3.1/name/`;
 
 const refs = {
@@ -56,23 +58,31 @@ function onInput(event) {
   const query = event.target.value.trim();
   console.log(query);
 
+  if (!query) {
+    refs.list.innerHTML = ``;
+    return;
+  }
+
   fetch(`${URL}${query}`)
     .then(response => {
-      return response.json();
+      if (response.ok) {
+        return response.json();
+      } else
+        Notiflix.Notify.failure('Oops, there is no country with that name');
     })
     .then(countryes => {
       items = countryes;
-      console.log(items);
-
       render();
-    });
+    })
+    .catch(error => console.log(error));
 }
 
 function render() {
-  console.log(items.length);
   const amountOfCountryes = items.length;
   if (amountOfCountryes > 10) {
-    window.alert(`Too many matches found. Please enter a more specific name.`);
+    Notiflix.Notify.info(
+      'Too many matches found. Please enter a more specific name.'
+    );
     return;
   }
   if (amountOfCountryes > 1 && amountOfCountryes <= 10) {
