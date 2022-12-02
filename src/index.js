@@ -53,17 +53,8 @@ let items = [];
 
 refs.form.addEventListener(`input`, _.debounce(onInput, DEBOUNCE_DELAY));
 
-function onInput(event) {
-  event.preventDefault();
-  const query = event.target.value.trim();
-  console.log(query);
-
-  if (!query) {
-    refs.list.innerHTML = ``;
-    return;
-  }
-
-  fetch(`${URL}${query}`)
+function fetchCountries(name) {
+  fetch(name)
     .then(response => {
       if (response.ok) {
         return response.json();
@@ -77,9 +68,23 @@ function onInput(event) {
     .catch(error => console.log(error));
 }
 
+function onInput(event) {
+  event.preventDefault();
+  const query = event.target.value.trim();
+  console.log(query);
+
+  if (!query) {
+    refs.list.innerHTML = ``;
+    return;
+  }
+
+  fetchCountries(`${URL}${query}`);
+}
+
 function render() {
   const amountOfCountryes = items.length;
   if (amountOfCountryes > 10) {
+    refs.list.innerHTML = ``;
     Notiflix.Notify.info(
       'Too many matches found. Please enter a more specific name.'
     );
