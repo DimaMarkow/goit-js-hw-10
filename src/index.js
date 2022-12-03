@@ -4,6 +4,8 @@ var _ = require('lodash');
 var debounce = require('lodash.debounce');
 import Notiflix from 'notiflix';
 
+import fetchCountries from './fetchCountries.js';
+
 const getItemTemplateSmall = ({ name, flags }) => {
   const str = `<li class="country-block">
   <div  class="country-strig">
@@ -41,6 +43,21 @@ const getItemTemplateFull = ({
   return str;
 };
 
+// function fetchCountries(name) {
+//   fetch(name)
+//     .then(response => {
+//       if (response.ok) {
+//         return response.json();
+//       } else
+//         Notiflix.Notify.failure('Oops, there is no country with that name');
+//     })
+//     .then(countryes => {
+//       items = countryes;
+//       render();
+//     })
+//     .catch(error => console.log(error));
+// }
+
 const DEBOUNCE_DELAY = 300;
 const URL = `https://restcountries.com/v3.1/name/`;
 
@@ -53,21 +70,6 @@ let items = [];
 
 refs.form.addEventListener(`input`, _.debounce(onInput, DEBOUNCE_DELAY));
 
-function fetchCountries(name) {
-  fetch(name)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else
-        Notiflix.Notify.failure('Oops, there is no country with that name');
-    })
-    .then(countryes => {
-      items = countryes;
-      render();
-    })
-    .catch(error => console.log(error));
-}
-
 function onInput(event) {
   event.preventDefault();
   const query = event.target.value.trim();
@@ -78,10 +80,15 @@ function onInput(event) {
     return;
   }
 
-  fetchCountries(`${URL}${query}`);
+  fetchCountries(`${URL}${query}`)
+    .then(countryes => {
+      items = countryes;
+      render();
+    })
+    .catch(error => console.log(error));
 }
 
-function render() {
+export function render() {
   const amountOfCountryes = items.length;
   if (amountOfCountryes > 10) {
     refs.list.innerHTML = ``;
