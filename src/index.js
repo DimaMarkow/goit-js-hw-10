@@ -13,7 +13,6 @@ const getItemTemplateSmall = ({ name, flags }) => {
   <div class="country-name">${name.common}</div>
   </div>
   </li>`;
-  // console.log(str);
   return str;
 };
 
@@ -43,23 +42,9 @@ const getItemTemplateFull = ({
   return str;
 };
 
-// function fetchCountries(name) {
-//   fetch(name)
-//     .then(response => {
-//       if (response.ok) {
-//         return response.json();
-//       } else
-//         Notiflix.Notify.failure('Oops, there is no country with that name');
-//     })
-//     .then(countryes => {
-//       items = countryes;
-//       render();
-//     })
-//     .catch(error => console.log(error));
-// }
-
 const DEBOUNCE_DELAY = 300;
 const URL = `https://restcountries.com/v3.1/name/`;
+const PARAMETERS = `?fields=name,flags,capital,population,languages`;
 
 const refs = {
   form: document.querySelector(`#search-box`),
@@ -80,7 +65,7 @@ function onInput(event) {
     return;
   }
 
-  fetchCountries(`${URL}${query}`)
+  fetchCountries(`${URL}${query}${PARAMETERS}`)
     .then(countryes => {
       items = countryes;
       render();
@@ -88,7 +73,7 @@ function onInput(event) {
     .catch(error => console.log(error));
 }
 
-export function render() {
+function render() {
   const amountOfCountryes = items.length;
   if (amountOfCountryes > 10) {
     refs.list.innerHTML = ``;
